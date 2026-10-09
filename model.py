@@ -1,23 +1,22 @@
-# Importing required libs
+"""Image preprocessing and digit prediction using the saved Keras model."""
+
 from keras.models import load_model
 from keras.utils import img_to_array
 import numpy as np
 from PIL import Image
 
-# Loading model
 model = load_model("digit_model.h5")
 
 
-# Preparing and pre-processing the image
 def preprocess_img(img_path):
-    op_img = Image.open(img_path)
-    img_resize = op_img.resize((224, 224))
-    img2arr = img_to_array(img_resize) / 255.0
-    img_reshape = img2arr.reshape(1, 224, 224, 3)
-    return img_reshape
+    """Resize and normalize an image into a batch with shape (1, 224, 224, 3)."""
+    image = Image.open(img_path)
+    resized_image = image.resize((224, 224))
+    image_array = img_to_array(resized_image) / 255.0
+    return image_array.reshape(1, 224, 224, 3)
 
 
-# Predicting function
 def predict_result(predict):
-    pred = model.predict(predict)
-    return np.argmax(pred[0], axis=-1)
+    """Return the digit index with the highest model prediction score."""
+    predictions = model.predict(predict)
+    return np.argmax(predictions[0], axis=-1)
